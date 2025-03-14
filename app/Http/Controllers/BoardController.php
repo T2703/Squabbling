@@ -139,4 +139,19 @@ class BoardController extends Controller
         return back()->with('message', 'You have successfully joined the board!');
     }
 
+    public function leave(BoardModel $board)
+    {
+        $user = auth()->user();
+
+        if ($board->users()->where('user_id', $user->id)->exists()) {
+            // Detach user from the board
+            $board->users()->detach($user->id);
+
+            return back()->with('message', 'You have successfully left the board!');
+        }
+
+        return back()->with('error', 'You are not part of this board.');
+    }
+
+
 }

@@ -12,6 +12,7 @@ Route::redirect('/', '/board')->name('dashboard');
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('board', BoardController::class);
     Route::post('/boards/{board}/join', [BoardController::class, 'join'])->name('board.join');
+    Route::post('/boards/{board}/leave', [BoardController::class, 'leave'])->name('board.leave');
 });
 
 // Discussion Routes

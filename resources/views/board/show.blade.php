@@ -8,13 +8,7 @@
         <span>{{ $tag->name }}</span>
     @endforeach
 
-    <h3>Board Members:</h3>
-    <ul>
-        @foreach($board->users as $user)
-            <li>{{ $user->id }}</li>
-        @endforeach
-    </ul>
-
+    <p>Members: {{ $board->users->count() }}</p>
 
     <h3>Discussions:</h3>
     @if($board->discussion->isEmpty())
@@ -38,8 +32,15 @@
 
     <a href="{{ route('board.index') }}">Back to Boards</a>
     
-    @if($board->users->contains(auth()->user()->id))
+    @if($board->users->contains(auth()->user()->id) || $board->user_id === auth()->id())
         <button type="button" onclick="openModal()">Add Discussion</button>
+    @endif
+
+    @if($board->users->contains(auth()->user()->id))
+        <form action="{{ route('board.leave', $board->id) }}" method="POST">
+            @csrf
+            <button type="submit">Leave Board</button>
+        </form>
     @endif
 
     <!-- Add Discussion Modal -->
@@ -73,4 +74,3 @@
         }
     }
 </script>
-
