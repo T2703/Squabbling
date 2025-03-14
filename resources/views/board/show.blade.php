@@ -8,6 +8,14 @@
         <span>{{ $tag->name }}</span>
     @endforeach
 
+    <h3>Board Members:</h3>
+    <ul>
+        @foreach($board->users as $user)
+            <li>{{ $user->id }}</li>
+        @endforeach
+    </ul>
+
+
     <h3>Discussions:</h3>
     @if($board->discussion->isEmpty())
         <p>No discussions yet.</p>
@@ -29,7 +37,10 @@
     @endif
 
     <a href="{{ route('board.index') }}">Back to Boards</a>
-    <button type="button" onclick="openModal()">Add Discussion</button>
+    
+    @if($board->users->contains(auth()->user()->id))
+        <button type="button" onclick="openModal()">Add Discussion</button>
+    @endif
 
     <!-- Add Discussion Modal -->
     <div id="discussionModal" class="modal" style="display:none;">

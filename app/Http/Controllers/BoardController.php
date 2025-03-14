@@ -20,8 +20,9 @@ class BoardController extends Controller
             ->paginate();*/
         
         $boards = BoardModel::query()->orderBy('created_at', 'desc')->get();
+        $users = User::all();
         //dd($notes); prints out the notes
-        return view('board.index', ['boards' => $boards]);
+        return view('board.index', compact('boards', 'users'));
     }
 
     /**
@@ -122,4 +123,20 @@ class BoardController extends Controller
 
         return to_route('board.index')->with('message', 'Note was deleted');
     }
+
+    public function join(BoardModel $board)
+    {
+        $user = auth()->user();
+    
+        // Check if the user is already part of the board
+        if ($board->users()->where('user_id', $user->id)->exists()) {
+            return back()->with('message', 'You are already a member of this board.');
+        }
+    
+        // Add the user to the board
+        $board->users()->attach($user->id);
+    
+        return back()->with('message', 'You have successfully joined the board!');
+    }
+
 }

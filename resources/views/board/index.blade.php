@@ -24,6 +24,11 @@
                         @method('DELETE')
                         <button>Delete</button>
                     </form>
+
+                    <form action="{{ route('board.join', $board->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">Join Board</button>
+                    </form>
                 </li>
                 <hr>
             @endforeach

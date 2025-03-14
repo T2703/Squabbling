@@ -26,4 +26,9 @@ class BoardModel extends Model
         return $this->hasMany(Discussion::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'board_user', 'board_id', 'user_id');
+    }
+
 }
