@@ -5,7 +5,7 @@
     <a href="{{ route('board.index') }}">Back to Boards</a>
     
     @if($board->users->contains(auth()->user()->id) || $board->user_id === auth()->id())
-        <button type="button" onclick="openModal()">Add Discussion</button>
+        <button type="button" onclick="openModal()">Comment</button>
     @endif
 
     @if($discussion->comments->isEmpty())
@@ -16,6 +16,23 @@
                 <li>
                     <p>{{ $comment->content }}</p>
                     <small>By {{ $comment->user->name }} on {{ $comment->created_at->format('M d, Y') }}</small>
+
+                    <!-- Reply Form -->
+                    <form action="{{ route('comment.reply', $comment->id) }}" method="POST">
+                        @csrf
+                        <textarea name="content" rows="2" required></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+
+                    <!-- Display Replies -->
+                    @if($comment->replies->isNotEmpty())
+                        <div style="margin-left: 20px;">
+                            @foreach($comment->replies as $reply)
+                                <p>{{ $reply->content }}</p>
+                                <small>By {{ $reply->user->name }} on {{ $reply->created_at->format('M d, Y') }}</small>
+                            @endforeach
+                        </div>
+                    @endif
 
                     @if($comment->user_id === auth()->id())
                         <form action="{{ route('comment.destroy', $comment->id) }}" method="POST">

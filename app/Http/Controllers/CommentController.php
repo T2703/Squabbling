@@ -31,4 +31,19 @@ class CommentController extends Controller
 
         return back()->with('error', 'You can only delete your own comments.');
     }
+
+    public function reply(Request $request, CommentModel $comment)
+    {
+        $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $comment->replies()->create([
+            'content' => $request->content,
+            'user_id' => auth()->id(),
+            'discussion_id' => $comment->discussion_id, // Ensure it's tied to the same discussion
+        ]);
+
+        return back()->with('message', 'Reply added successfully!');
+    }
 }
