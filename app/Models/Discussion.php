@@ -27,4 +27,12 @@ class Discussion extends Model
     {
         return $this->belongsTo(BoardModel::class);
     }
+
+    /**
+     * Get the comments that this discussion belongs to.
+     */
+    public function comments()
+    {
+        return $this->hasMany(CommentModel::class);
+    }
 }
