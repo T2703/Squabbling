@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,12 @@ Route::middleware(['auth', 'verified'])->group(function() {
 // Discussion Routes
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('board.discussion', DiscussionController::class);
+});
+
+// Comment routes.
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::resource('comment', CommentController::class);
+    Route::post('/discussion/{discussion}/comment', [CommentController::class, 'store'])->name('comment.store');
 });
 
 Route::middleware('auth')->group(function () {
