@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('comment_models', function (Blueprint $table) {
             $table->id();
             $table->text('content');
+            $table->foreignId('parent_id')->nullable()->constrained('comment_models')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('discussion_id')->constrained('discussions')->onDelete('cascade');
             $table->timestamps();
 
-            $table->index('user_id');
-            $table->index('discussion_id');
+            //$table->index('user_id');
+            //$table->index('discussion_id');
         });
     }
 
@@ -28,6 +29,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('comment_models', function (Blueprint $table) {
+            $table->dropForeign(['parent_id']);
+            $table->dropColumn('parent_id');
+        });
+    
         Schema::dropIfExists('comment_models');
     }
 };

@@ -25,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('comment', CommentController::class);
     Route::post('/discussion/{discussion}/comment', [CommentController::class, 'store'])->name('comment.store');
+    Route::post('/comment/{comment}/reply', [CommentController::class, 'reply'])->name('comment.reply');
 });
 
 Route::middleware('auth')->group(function () {
