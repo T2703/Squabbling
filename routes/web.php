@@ -3,6 +3,7 @@
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\LikesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,11 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('comment', CommentController::class);
     Route::post('/discussion/{discussion}/comment', [CommentController::class, 'store'])->name('comment.store');
     Route::post('/comment/{comment}/reply', [CommentController::class, 'reply'])->name('comment.reply');
+});
+
+// Discussion likes routes
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::post('/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
 });
 
 Route::middleware('auth')->group(function () {

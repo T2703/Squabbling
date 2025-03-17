@@ -49,5 +49,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(BoardModel::class, 'board_user', 'user_id', 'board_id');
     }
+
+    public function likedDiscussions()
+    {
+        return $this->belongsToMany(Discussion::class, 'likes')->withTimestamps();
+    }
     
 }

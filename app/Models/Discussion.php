@@ -35,4 +35,9 @@ class Discussion extends Model
     {
         return $this->hasMany(CommentModel::class);
     }
+
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'likes')->withTimestamps();
+    }
 }

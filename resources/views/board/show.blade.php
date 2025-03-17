@@ -20,6 +20,19 @@
                     <p>{{ $discussions->content }}</p>
                     <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
                     <a href="{{ route('board.discussion.show', [$board->id, $discussions->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussions->id]) }}">Edit</a>
+
+                    <form action="{{ route('discussion.like', $discussions->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if($discussions->likes->contains(auth()->user()->id))
+                                ❤️ Unlike
+                            @else
+                                🤍 Like
+                            @endif
+                        </button>
+                        <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
+                    </form>
+
                     <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
