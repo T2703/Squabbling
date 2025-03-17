@@ -40,4 +40,9 @@ class Discussion extends Model
     {
         return $this->belongsToMany(User::class, 'likes')->withTimestamps();
     }
+
+    public function dislikes()
+    {
+        return $this->belongsToMany(User::class, 'dislikes')->withTimestamps();
+    }
 }

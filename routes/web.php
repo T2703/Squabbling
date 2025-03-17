@@ -3,6 +3,7 @@
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\DislikesController;
 use App\Http\Controllers\LikesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
 // Discussion likes routes
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
+    Route::post('/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
+
 });
 
 Route::middleware('auth')->group(function () {

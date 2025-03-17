@@ -54,5 +54,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Discussion::class, 'likes')->withTimestamps();
     }
+
+    public function dislikedDiscussions()
+    {
+        return $this->belongsToMany(Discussion::class, 'dislikes')->withTimestamps();
+    }
     
 }
