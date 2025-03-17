@@ -33,6 +33,19 @@
                         <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
                     </form>
 
+                    <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if($discussions->dislikes->contains(auth()->user()->id))
+                                👎 Undislike
+                            @else
+                                👎 Dislike
+                            @endif
+                        </button>
+                        <span>{{ $discussions->dislikes->count() }} {{ Str::plural('Dislike', $discussions->dislikes->count()) }}</span>
+                    </form>
+                    
+
                     <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
                         @csrf
                         @method('DELETE')
