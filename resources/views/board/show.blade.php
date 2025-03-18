@@ -1,4 +1,4 @@
-<x-app-layout>
+<div>
     <h1>Board Details</h1>
 
     <p><strong>Title:</strong> {{ $board->title }}</p>
@@ -32,6 +32,19 @@
                         </button>
                         <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
                     </form>
+
+                    
+                    <form action="{{ route('user.block', $user->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if(auth()->user()->isBlocking($user))
+                                Unblock
+                            @else
+                                Block
+                            @endif
+                        </button>
+                    </form>
+                    
 
                     <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
                         @csrf
@@ -82,7 +95,7 @@
             </form>
         </div>
     </div>
-</x-app-layout>
+</div>
 <script>
     function openModal() {
         document.getElementById('discussionModal').style.display = 'flex';

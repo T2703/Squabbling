@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlockController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DiscussionController;
@@ -13,29 +14,27 @@ Route::redirect('/', '/board')->name('dashboard');
 
 // Board routes.
 Route::middleware(['auth', 'verified'])->group(function() {
+    // Board routes.
     Route::resource('board', BoardController::class);
     Route::post('/boards/{board}/join', [BoardController::class, 'join'])->name('board.join');
     Route::post('/boards/{board}/leave', [BoardController::class, 'leave'])->name('board.leave');
-});
 
-// Discussion Routes
-Route::middleware(['auth', 'verified'])->group(function() {
+    // Discussion Routes
     Route::resource('board.discussion', DiscussionController::class);
-});
 
-// Comment routes.
-Route::middleware(['auth', 'verified'])->group(function() {
+    // Comment routes.
     Route::resource('comment', CommentController::class);
     Route::post('/discussion/{discussion}/comment', [CommentController::class, 'store'])->name('comment.store');
     Route::post('/comment/{comment}/reply', [CommentController::class, 'reply'])->name('comment.reply');
-});
 
-// Discussion likes routes
-Route::middleware(['auth', 'verified'])->group(function() {
+    // Discussion likes & dislikes routes
     Route::post('/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
     Route::post('/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
 
+    // Block Routes
+    Route::post('/user/{user}/block', [BlockController::class, 'toggleBlock'])->name('user.block');
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

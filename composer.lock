@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31f91bfac1ed178dbae6c12ac6c66a97",
+    "content-hash": "8c99d82d5ae8e0f3b80e8f1782448659",
     "packages": [
         {
             "name": "brick/math",
@@ -5568,6 +5568,64 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
             },
             "time": "2024-12-21T16:25:41+00:00"
+        },
+        {
+            "name": "timgavin/laravel-block",
+            "version": "1.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/timgavin/laravel-block.git",
+                "reference": "709371f8999f9f55bc3da75d2ae687edf0599192"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/timgavin/laravel-block/zipball/709371f8999f9f55bc3da75d2ae687edf0599192",
+                "reference": "709371f8999f9f55bc3da75d2ae687edf0599192",
+                "shasum": ""
+            },
+            "require-dev": {
+                "orchestra/testbench": "~7",
+                "phpunit/phpunit": "~9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "LaravelBlock": "TimGavin\\LaravelBlock\\Facades\\LaravelBlock"
+                    },
+                    "providers": [
+                        "TimGavin\\LaravelBlock\\LaravelBlockServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TimGavin\\LaravelBlock\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tim Gavin",
+                    "email": "tim@timgavin.name",
+                    "homepage": "https://github.com/timgavin"
+                }
+            ],
+            "description": "A User can block another User",
+            "homepage": "https://github.com/timgavin/laravel-block",
+            "keywords": [
+                "Block users",
+                "LaravelBlock",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/timgavin/laravel-block/issues",
+                "source": "https://github.com/timgavin/laravel-block/tree/1.1.10"
+            },
+            "time": "2024-04-27T15:34:26+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
