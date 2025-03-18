@@ -16,55 +16,68 @@
     @else
         <ul>
             @foreach($board->discussion as $discussions)
-                <li>
-                    <p>{{ $discussions->content }}</p>
-                    <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
-                    <a href="{{ route('board.discussion.show', [$board->id, $discussions->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussions->id]) }}">Edit</a>
+                
+                @if (!@auth()->user()->isBlocking($discussions->user_id))
+                    <li>
+                        <p>{{ $discussions->content }}</p>
+                        <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
+                        <a href="{{ route('board.discussion.show', [$board->id, $discussions->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussions->id]) }}">Edit</a>
 
-                    <form action="{{ route('discussion.like', $discussions->id) }}" method="POST">
-                        @csrf
-                        <button type="submit">
-                            @if($discussions->likes->contains(auth()->user()->id))
-                                ❤️ Unlike
-                            @else
-                                🤍 Like
-                            @endif
-                        </button>
-                        <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
-                    </form>
+                        <form action="{{ route('discussion.like', $discussions->id) }}" method="POST">
+                            @csrf
+                            <button type="submit">
+                                @if($discussions->likes->contains(auth()->user()->id))
+                                    ❤️ Unlike
+                                @else
+                                    🤍 Like
+                                @endif
+                            </button>
+                            <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
+                        </form>
 
-                    
-                    <form action="{{ route('user.block', $user->id) }}" method="POST">
-                        @csrf
-                        <button type="submit">
-                            @if(auth()->user()->isBlocking($user))
-                                Unblock
-                            @else
-                                Block
-                            @endif
-                        </button>
-                    </form>
-                    
+                        
+                        <form action="{{ route('user.block', $discussions->user_id) }}" method="POST">
+                            @csrf
+                            <button type="submit">
+                                @if(auth()->user()->isBlocking($discussions))
+                                    Unblock
+                                @else
+                                    Block
+                                @endif
+                            </button>
+                        </form>
+                        
 
-                    <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
-                        @csrf
-                        <button type="submit">
-                            @if($discussions->dislikes->contains(auth()->user()->id))
-                                👎 Undislike
-                            @else
-                                👎 Dislike
-                            @endif
-                        </button>
-                        <span>{{ $discussions->dislikes->count() }} {{ Str::plural('Dislike', $discussions->dislikes->count()) }}</span>
-                    </form>
-                    
+                        <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
+                            @csrf
+                            <button type="submit">
+                                @if($discussions->dislikes->contains(auth()->user()->id))
+                                    👎 Undislike
+                                @else
+                                    👎 Dislike
+                                @endif
+                            </button>
+                            <span>{{ $discussions->dislikes->count() }} {{ Str::plural('Dislike', $discussions->dislikes->count()) }}</span>
+                        </form>
+                        
 
-                    <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button>Delete</button>
-                    </form>
-                </li>
+                        <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button>Delete</button>
+                        </form>
+                    </li>
+                @endif
+                <form action="{{ route('user.block', $discussions->user_id) }}" method="POST">
+                    @csrf
+                    <button type="submit">
+                        @if(auth()->user()->isBlocking($discussions))
+                            Unblock
+                        @else
+                            Block
+                        @endif
+                    </button>
+                </form>
             @endforeach
         </ul>
     @endif
