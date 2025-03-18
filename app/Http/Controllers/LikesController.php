@@ -11,6 +11,11 @@ class LikesController extends Controller
     {
         $user = auth()->user();
 
+        // Check if user has disliked the discussion and remove it if true
+        if ($discussion->dislikes()->where('user_id', $user->id)->exists()) {
+            $discussion->dislikes()->detach($user->id);
+        }
+
         if ($discussion->likes()->where('user_id', $user->id)->exists()) {
             // Unlike
             $discussion->likes()->detach($user->id);

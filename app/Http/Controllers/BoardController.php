@@ -64,10 +64,8 @@ class BoardController extends Controller
      */
     public function show(BoardModel $board)
     {
-        /*if ($board->user_id !== request()->user()->id) {
-            abort(403);
-        }*/
-        return view('board.show', ['board' => $board]);
+        $user = auth()->user(); 
+        return view('board.show', compact('board', 'user'));
     }
 
     /**
