@@ -48,6 +48,7 @@ class DiscussionController extends Controller
      */
     public function show(BoardModel $board, Discussion $discussion)
     {
+        $discussion->load('comments.replies');
         return view('discussion.show', compact('board', 'discussion'));
     }
 

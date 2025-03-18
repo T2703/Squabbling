@@ -9,27 +9,46 @@
     @endif
 
     @if($discussion->comments->isEmpty())
-    <p>No comments yet.</p>
+        <p>No comments yet.</p>
     @else
         <ul>
             @foreach($discussion->comments as $comment)
                 <li>
                     <p>{{ $comment->content }}</p>
-                    <small>By {{ $comment->user->name }} on {{ $comment->created_at->format('M d, Y') }}</small>
+                    @if ($comment->user_id === $discussion->user_id)
+                        <small>
+                            By OP
+                            on {{ $comment->created_at->format('M d, Y') }}
+                        </small> 
+                    @endif
+                    
+                    <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
 
-                    <!-- Reply Form -->
-                    <form action="{{ route('comment.reply', $comment->id) }}" method="POST">
-                        @csrf
-                        <textarea name="content" rows="2" required></textarea>
-                        <button type="submit">Reply</button>
-                    </form>
+                    <!-- Reply Modal for Each Comment -->
+                    <div id="commentModal-{{ $comment->id }}" class="modal" style="display:none;">
+                        <div class="modal-content">
+                            <button class="close-button" onclick="closeModalComment({{ $comment->id }})">&times;</button>
+                            <h2>Add a Reply</h2>
+                            <form action="{{ route('comment.reply', $comment->id) }}" method="POST">
+                                @csrf
+                                <label for="content">Reply Content:</label>
+                                <textarea id="content" name="content" rows="3" required></textarea>
+                                <button type="submit" style="margin-top: 10px;">Add Reply</button>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Display Replies -->
                     @if($comment->replies->isNotEmpty())
                         <div style="margin-left: 20px;">
                             @foreach($comment->replies as $reply)
                                 <p>{{ $reply->content }}</p>
-                                <small>By {{ $reply->user->name }} on {{ $reply->created_at->format('M d, Y') }}</small>
+                                @if ($comment->user_id === $discussion->user_id)
+                                    <small>
+                                        By OP
+                                        on {{ $comment->created_at->format('M d, Y') }}
+                                    </small> 
+                                @endif
                             @endforeach
                         </div>
                     @endif
@@ -59,6 +78,7 @@
             </form>
         </div>
     </div>
+
 </div>
 <script>
     function openModal() {
@@ -75,5 +95,30 @@
         if (event.target === modal) {
             closeModal();
         }
+    }
+
+    function openModalComment(commentId) {
+        document.getElementById(`commentModal-${commentId}`).style.display = 'flex';
+    }
+
+    function closeModalComment(commentId) {
+        document.getElementById(`commentModal-${commentId}`).style.display = 'none';
+    }
+
+
+    // Close modal if user clicks outside content area
+    window.onclick = function(event) {
+        const discussionModal = document.getElementById('discussionModal');
+        const commentModals = document.querySelectorAll('[id^="commentModal-"]');
+
+        if (event.target === discussionModal) {
+            closeModal();
+        }
+
+        commentModals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
     }
 </script>
