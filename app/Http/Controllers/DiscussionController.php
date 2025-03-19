@@ -48,7 +48,19 @@ class DiscussionController extends Controller
      */
     public function show(BoardModel $board, Discussion $discussion)
     {
-        $discussion->load('comments.replies');
+        $currentUser = auth()->user();
+        
+        if ($currentUser->isBlocking($discussion->user_id) || $discussion->user->isBlocking($currentUser->id)) {
+            abort(403, 'You are not allowed to view this content.');
+        }
+
+
+        $discussion->load([
+            'comments' => function ($query) {
+                $query->whereNull('parent_id')->with('replies');
+            }
+        ]);
+
         return view('discussion.show', compact('board', 'discussion'));
     }
 

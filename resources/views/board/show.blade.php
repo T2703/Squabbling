@@ -17,7 +17,7 @@
         <ul>
             @foreach($board->discussion as $discussions)
                 
-                @if (!@auth()->user()->isBlocking($discussions->user_id))
+                @if(!auth()->user()->isBlocking($discussions->user_id) && !$discussions->user->isBlocking(auth()->id()))
                     <li>
                         <p>{{ $discussions->content }}</p>
                         <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
@@ -35,18 +35,19 @@
                             <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
                         </form>
 
-                        
-                        <form action="{{ route('user.block', $discussions->user_id) }}" method="POST">
-                            @csrf
-                            <button type="submit">
-                                @if(auth()->user()->isBlocking($discussions))
-                                    Unblock
-                                @else
-                                    Block
-                                @endif
-                            </button>
-                        </form>
-                        
+                        @if($discussions->user_id !== auth()->id())
+                            @if(auth()->user()->isBlocking($discussions->user))
+                                <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit">Unblock</button>
+                                </form>
+                            @else
+                                <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit">Block</button>
+                                </form>
+                            @endif
+                        @endif
 
                         <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
                             @csrf
@@ -68,16 +69,6 @@
                         </form>
                     </li>
                 @endif
-                <form action="{{ route('user.block', $discussions->user_id) }}" method="POST">
-                    @csrf
-                    <button type="submit">
-                        @if(auth()->user()->isBlocking($discussions))
-                            Unblock
-                        @else
-                            Block
-                        @endif
-                    </button>
-                </form>
             @endforeach
         </ul>
     @endif
