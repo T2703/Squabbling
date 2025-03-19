@@ -32,7 +32,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
 
     // Block Routes
+    Route::resource('blocked', BlockController::class);
     Route::post('/user/{user}/block', [BlockController::class, 'toggleBlock'])->name('user.block');
+    Route::post('/unblock-all', [BlockController::class, 'unblockAll'])->name('blocks.unblockAll');
 });
 
 
