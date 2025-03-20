@@ -49,6 +49,16 @@
                                         on {{ $comment->created_at->format('M d, Y') }}
                                     </small> 
                                 @endif
+                                <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
+
+                                @if($comment->user_id === auth()->id())
+                                    <form action="{{ route('comment.destroy', $comment->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit">Delete</button>
+                                    </form>
+                                @endif
+
                             @endforeach
                         </div>
                     @endif
