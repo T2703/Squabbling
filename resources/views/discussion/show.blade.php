@@ -21,6 +21,18 @@
                             on {{ $comment->created_at->format('M d, Y') }}
                         </small> 
                     @endif
+
+                    <form action="{{ route('comment.like', $comment->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if(($comment->likes ?? collect())->contains(auth()->user()->id))
+                                ❤️ Unlike
+                            @else
+                                🤍 Like
+                            @endif
+                        </button>
+                        <span>{{ ($comment->likes ?? collect())->count() }} {{ Str::plural('Like', ($comment->likes ?? collect())->count()) }}</span>
+                    </form>
                     
                     <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
 
