@@ -33,6 +33,18 @@
                         </button>
                         <span>{{ ($comment->likes ?? collect())->count() }} {{ Str::plural('Like', ($comment->likes ?? collect())->count()) }}</span>
                     </form>
+
+                    <form action="{{ route('comment.dislike', $comment->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if($comment->dislikes->contains(auth()->user()->id))
+                                👎 Undislike
+                            @else
+                                👎 Dislike
+                            @endif
+                        </button>
+                        <span>{{ $comment->dislikes->count() }} {{ Str::plural('Dislike', $comment->dislikes->count()) }}</span>
+                    </form>
                     
                     <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
 

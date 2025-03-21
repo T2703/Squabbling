@@ -37,4 +37,9 @@ class CommentModel extends Model
     {
         return $this->belongsToMany(User::class, 'comment_like', 'comment_id', 'user_id')->withTimestamps();
     }
+
+    public function dislikes()
+    {
+        return $this->belongsToMany(User::class, 'comment_dislike', 'comment_id', 'user_id')->withTimestamps();
+    }
 }
