@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentDislikeController;
 use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\DislikesController;
@@ -34,7 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     // Comment likes & dislikes routes
     Route::post('/comment/{comment}/like', [CommentLikeController::class, 'toggleLike'])->name('comment.like');
-
+    Route::post('/comment/{comment}/dislike', [CommentDislikeController::class, 'toggleDislike'])->name('comment.dislike');
+    
     // Block Routes
     Route::resource('blocked', BlockController::class);
     Route::post('/user/{user}/block', [BlockController::class, 'toggleBlock'])->name('user.block');

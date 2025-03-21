@@ -65,5 +65,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(CommentModel::class, 'comment_like', 'user_id', 'comment_id')->withTimestamps();
     }
+
+    public function dislikedComments()
+    {
+        return $this->belongsToMany(CommentModel::class, 'comment_dislike', 'user_id', 'comment_id')->withTimestamps();
+    }
     
 }

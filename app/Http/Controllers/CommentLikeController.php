@@ -11,10 +11,10 @@ class CommentLikeController extends Controller
     {
         $user = auth()->user();
 
-        // Check if user has disliked the discussion and remove it if true
-        /*if ($discussion->dislikes()->where('user_id', $user->id)->exists()) {
-            $discussion->dislikes()->detach($user->id);
-        }*/
+        // Check if user has disliked the comment and remove it if true
+        if ($comment->dislikes()->where('user_id', $user->id)->exists()) {
+            $comment->dislikes()->detach($user->id);
+        }
 
         if ($comment->likes()->where('user_id', $user->id)->exists()) {
             // Unlike
