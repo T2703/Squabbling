@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlockController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\DislikesController;
 use App\Http\Controllers\LikesController;
@@ -30,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     // Discussion likes & dislikes routes
     Route::post('/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
     Route::post('/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
+
+    // Comment likes & dislikes routes
+    Route::post('/comment/{comment}/like', [CommentLikeController::class, 'toggleLike'])->name('comment.like');
 
     // Block Routes
     Route::resource('blocked', BlockController::class);
