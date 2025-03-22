@@ -62,31 +62,28 @@
                         </div>
                     </div>
 
-                    <!-- Display Replies -->
+                    <!-- Display Replies with Toggle -->
                     @if($comment->replies->isNotEmpty())
-                        <div style="margin-left: 20px;">
+                        <button type="button" onclick="toggleReplies({{ $comment->id }})">
+                            View Replies ({{ $comment->replies->count() }})
+                        </button>
+
+                        <div id="replies-{{ $comment->id }}" style="display: none; margin-left: 20px;">
                             @foreach($comment->replies as $reply)
                                 <p>{{ $reply->content }}</p>
-                                @if ($comment->user_id === $discussion->user_id)
-                                    <small>
-                                        By OP
-                                        on {{ $comment->created_at->format('M d, Y') }}
-                                    </small> 
-                                @endif
-                                <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
+                                <small>By OP on {{ $reply->created_at->format('M d, Y') }}</small>
+                                <button type="button" onclick="openModalComment({{ $reply->id }})">Reply</button>
 
-                                @if($comment->user_id === auth()->id())
-                                    <form action="{{ route('comment.destroy', $comment->id) }}" method="POST">
+                                @if($reply->user_id === auth()->id())
+                                    <form action="{{ route('comment.destroy', $reply->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit">Delete</button>
                                     </form>
                                 @endif
-
                             @endforeach
                         </div>
                     @endif
-
                     @if($comment->user_id === auth()->id())
                         <form action="{{ route('comment.destroy', $comment->id) }}" method="POST">
                             @csrf
@@ -114,6 +111,7 @@
     </div>
 
 </div>
+
 <script>
     function openModal() {
         document.getElementById('discussionModal').style.display = 'flex';
@@ -154,5 +152,16 @@
                 modal.style.display = 'none';
             }
         });
+    }
+</script>
+
+<script>
+    function toggleReplies(commentId) {
+        let repliesDiv = document.getElementById(`replies-${commentId}`);
+        if (repliesDiv.style.display === "none") {
+            repliesDiv.style.display = "block";
+        } else {
+            repliesDiv.style.display = "none";
+        }
     }
 </script>
