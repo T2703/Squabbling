@@ -17,10 +17,8 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('comment_models')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('discussion_id')->constrained('discussions')->onDelete('cascade');
+            $table->unsignedInteger('reply_number')->nullable(); // User's unique reply number
             $table->timestamps();
-
-            //$table->index('user_id');
-            //$table->index('discussion_id');
         });
     }
 

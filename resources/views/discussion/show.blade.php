@@ -70,9 +70,58 @@
 
                         <div id="replies-{{ $comment->id }}" style="display: none; margin-left: 20px;">
                             @foreach($comment->replies as $reply)
+
+                                <!-- Reply Modal for Each Reply This is needed otherwise it can't work :(  -->
+                                <div id="commentModal-{{ $reply->id }}" class="modal" style="display:none;">
+                                    <div class="modal-content">
+                                        <button class="close-button" onclick="closeModalComment({{ $reply->id }})">&times;</button>
+                                        <h2>Add a Reply</h2>
+                                        <form action="{{ route('comment.reply', $reply->id) }}" method="POST">
+                                            @csrf
+                                            <label for="content">Reply Content:</label>
+                                            <textarea id="content" name="content" rows="3" required></textarea>
+                                            <button type="submit" style="margin-top: 10px;">Add Reply</button>
+                                        </form>
+                                    </div>
+                                </div>
                                 <p>{{ $reply->content }}</p>
-                                <small>By OP on {{ $reply->created_at->format('M d, Y') }}</small>
+                                @if ($reply->user_id === $discussion->user_id)
+                                    <small>
+                                        By OP
+                                        on {{ $comment->created_at->format('M d, Y') }}
+                                    </small> 
+                                @else
+                                    <strong>#{{ $reply->reply_number }} ▸ #{{ $comment->reply_number }}</strong> 
+                                @endif
                                 <button type="button" onclick="openModalComment({{ $reply->id }})">Reply</button>
+
+                                <!-- Reply for the replies. -->
+                                @if($reply->replies->isNotEmpty())
+                                    <button type="button" onclick="toggleReplies({{ $reply->id }})">
+                                        View Replies ({{ $reply->replies->count() }})
+                                    </button>
+                                    <div id="replies-{{ $reply->id }}" style="display: none; margin-left: 40px;">
+                                        @foreach($reply->replies as $nestedReply)
+
+                                            <!-- Reply Modal for Each Reply This is needed otherwise it can't work :(  -->
+                                            <div id="commentModal-{{ $nestedReply->id }}" class="modal" style="display:none;">
+                                                <div class="modal-content">
+                                                    <button class="close-button" onclick="closeModalComment({{ $nestedReply->id }})">&times;</button>
+                                                    <h2>Add a Reply</h2>
+                                                    <form action="{{ route('comment.reply', $nestedReply->id) }}" method="POST">
+                                                        @csrf
+                                                        <label for="content">Reply Content:</label>
+                                                        <textarea id="content" name="content" rows="3" required></textarea>
+                                                        <button type="submit" style="margin-top: 10px;">Add Reply</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <p><strong>#{{ $nestedReply->reply_number }} ▸ #{{ $reply->reply_number }}</strong> {{ $nestedReply->content }}</p>
+                                            <button type="button" onclick="openModalComment({{ $nestedReply->id }})">Reply</button>
+                                        @endforeach
+                                    </div>
+                                @endif
 
                                 @if($reply->user_id === auth()->id())
                                     <form action="{{ route('comment.destroy', $reply->id) }}" method="POST">
@@ -130,11 +179,19 @@
     }
 
     function openModalComment(commentId) {
-        document.getElementById(`commentModal-${commentId}`).style.display = 'flex';
+        let modal = document.getElementById(`commentModal-${commentId}`);
+        if (modal) {
+            modal.style.display = 'flex';
+        } else {
+            console.error(`Modal with ID commentModal-${commentId} not found.`);
+        }
     }
 
     function closeModalComment(commentId) {
-        document.getElementById(`commentModal-${commentId}`).style.display = 'none';
+        let modal = document.getElementById(`commentModal-${commentId}`);
+        if (modal) {
+            modal.style.display = 'none';
+        }
     }
 
 

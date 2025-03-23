@@ -38,10 +38,25 @@ class CommentController extends Controller
             'content' => 'required|string|max:500',
         ]);
 
+        $user = auth()->user();
+
+        // Check if user already has a reply_number in this discussion
+        $existingReply = CommentModel::where('discussion_id', $comment->discussion_id)
+                                ->where('user_id', $user->id)
+                                ->first();
+        
+        // Placeholder if the replier is the owner.
+        $replyNumber = NULL;
+        if ($comment->user_id !== auth()->id()) {
+            $maxReplyNumber = CommentModel::where('discussion_id', $comment->discussion_id)->max('reply_number');
+            $replyNumber = $existingReply ? $existingReply->reply_number : ($maxReplyNumber !== null ? $maxReplyNumber + 1 : 1);
+        }
+        
         $comment->replies()->create([
             'content' => $request->content,
             'user_id' => auth()->id(),
             'discussion_id' => $comment->discussion_id, // Ensure it's tied to the same discussion
+            'reply_number' => $replyNumber,
         ]);
 
         return back()->with('message', 'Reply added successfully!');
