@@ -14,15 +14,21 @@ class BoardController extends Controller
      */
     public function index()
     {
-        /*$boards = BoardModel::query()
+        $boards = BoardModel::query()
         ->where('user_id', request()->user()->id)
             ->orderBy('created_at', 'desc')
-            ->paginate();*/
-        
-        $boards = BoardModel::query()->orderBy('created_at', 'desc')->get();
+            ->paginate();
         $users = User::all();
         //dd($notes); prints out the notes
         return view('board.index', compact('boards', 'users'));
+    }
+    
+    public function allBoards()
+    {
+        
+        $boards = BoardModel::query()->orderBy('created_at', 'desc')->get();
+        $users = User::all();
+        return view('board.all', compact('boards', 'users'));
     }
 
     /**

@@ -93,6 +93,31 @@
                                 @else
                                     <strong>#{{ $reply->reply_number }} ▸ #{{ $comment->reply_number }}</strong> 
                                 @endif
+
+                                <form action="{{ route('comment.like', $reply->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit">
+                                        @if(($reply->likes ?? collect())->contains(auth()->user()->id))
+                                            ❤️ Unlike
+                                        @else
+                                            🤍 Like
+                                        @endif
+                                    </button>
+                                    <span>{{ ($reply->likes ?? collect())->count() }} {{ Str::plural('Like', ($reply->likes ?? collect())->count()) }}</span>
+                                </form>
+            
+                                <form action="{{ route('comment.dislike', $reply->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit">
+                                        @if($reply->dislikes->contains(auth()->user()->id))
+                                            👎 Undislike
+                                        @else
+                                            👎 Dislike
+                                        @endif
+                                    </button>
+                                    <span>{{ $reply->dislikes->count() }} {{ Str::plural('Dislike', $reply->dislikes->count()) }}</span>
+                                </form>
+
                                 <button type="button" onclick="openModalComment({{ $reply->id }})">Reply</button>
 
                                 <!-- Reply for the replies. -->
@@ -116,6 +141,31 @@
                                                     </form>
                                                 </div>
                                             </div>
+
+                                            <form action="{{ route('comment.like', $nestedReply->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit">
+                                                    @if(($nestedReply->likes ?? collect())->contains(auth()->user()->id))
+                                                        ❤️ Unlike
+                                                    @else
+                                                        🤍 Like
+                                                    @endif
+                                                </button>
+                                                <span>{{ ($nestedReply->likes ?? collect())->count() }} {{ Str::plural('Like', ($nestedReply->likes ?? collect())->count()) }}</span>
+                                            </form>
+                        
+                                            <form action="{{ route('comment.dislike', $nestedReply->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit">
+                                                    @if($nestedReply->dislikes->contains(auth()->user()->id))
+                                                        👎 Undislike
+                                                    @else
+                                                        👎 Dislike
+                                                    @endif
+                                                </button>
+                                                <span>{{ $nestedReply->dislikes->count() }} {{ Str::plural('Dislike', $nestedReply->dislikes->count()) }}</span>
+                                            </form>
+            
 
                                             <p><strong>#{{ $nestedReply->reply_number }} ▸ #{{ $reply->reply_number }}</strong> {{ $nestedReply->content }}</p>
                                             <button type="button" onclick="openModalComment({{ $nestedReply->id }})">Reply</button>
