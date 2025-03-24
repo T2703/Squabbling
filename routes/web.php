@@ -14,11 +14,15 @@ use Illuminate\Support\Facades\Route;
 // Dashboard routes.
 Route::redirect('/', '/board')->name('dashboard');
 
+Route::get('/board/all', [BoardController::class, 'allBoards'])->name('board.all');
+Route::get('/board/search', [BoardController::class, 'search'])->name('board.search');
+
 // Board routes.
 Route::middleware(['auth', 'verified'])->group(function() {
     // Board routes.
     Route::resource('board', BoardController::class);
     Route::get('/board/all', [BoardController::class, 'allBoards'])->name('board.all');
+    Route::get('/board/search', [BoardController::class, 'search'])->name('board.search');
     Route::post('/boards/{board}/join', [BoardController::class, 'join'])->name('board.join');
     Route::post('/boards/{board}/leave', [BoardController::class, 'leave'])->name('board.leave');
 

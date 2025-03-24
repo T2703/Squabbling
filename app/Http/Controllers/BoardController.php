@@ -157,5 +157,13 @@ class BoardController extends Controller
         return back()->with('error', 'You are not part of this board.');
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $boards = BoardModel::where('title', 'like', "%$search%")->get();
+
+        return view('board.index', compact('boards'));
+    }
+
 
 }
