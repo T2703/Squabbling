@@ -1,7 +1,7 @@
 <x-app-layout>
 
     <form action="{{ route('board.search') }}" method="GET">
-        <input type="text" name="search" placeholder="Search Products">
+        <input type="text" name="search" placeholder="Search Boards">
         <button type="submit">Search</button>
     </form>
 

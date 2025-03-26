@@ -1,13 +1,16 @@
 <x-app-layout>
+    <form action="{{ route('board.searchOwn') }}" method="GET">
+        <input type="text" name="search" placeholder="Search Products">
+        <button type="submit">Search</button>
+    </form>
+
     <h1>Boards List</h1>
 
     @if(session('message'))
         <p style="color: green;">{{ session('message') }}</p>
     @endif
 
-    @if($boards->isEmpty())
-        <p>No boards available.</p>
-    @else
+    @if(isset($boards) && $boards->isNotEmpty())
         <ul>
             @foreach($boards as $board)
                 <li>
@@ -33,5 +36,7 @@
                 <hr>
             @endforeach
         </ul>
+    @else
+        <p>No boards available.</p>
     @endif
 </x-app-layout>

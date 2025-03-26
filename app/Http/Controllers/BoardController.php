@@ -14,12 +14,21 @@ class BoardController extends Controller
      */
     public function index()
     {
-        $boards = BoardModel::query()
-        ->where('user_id', request()->user()->id)
+        $user = request()->user();
+
+        $ownBoards = BoardModel::query()
+            ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate();
+
+        $joinedBoards = $user->boards()
+            ->where('board_models.user_id', '!=', $user->id) 
+            ->orderBy('board_models.created_at', 'desc')
+            ->get();
+        
+        $boards = $ownBoards->merge($joinedBoards);
         $users = User::all();
-        //dd($notes); prints out the notes
+
         return view('board.index', compact('boards', 'users'));
     }
     
@@ -165,5 +174,24 @@ class BoardController extends Controller
         return view('board.index', compact('boards'));
     }
 
+    public function searchOwn(Request $request)
+    {
+        $user = request()->user();
+        $search = $request->input('search');
 
+        $ownBoards = BoardModel::where('user_id', $user->id)
+            ->where('title', 'like', "%$search%")
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $joinedBoards = $user->boards()
+            ->where('board_models.user_id', '!=', $user->id) // Specify table for user_id
+            ->where('board_models.title', 'like', "%$search%") // Apply search filter
+            ->orderBy('board_models.created_at', 'desc')
+            ->get();
+        
+        $boards = $ownBoards->merge($joinedBoards);
+
+        return view('board.index', compact('boards'));
+    }
 }

@@ -16,6 +16,7 @@ Route::redirect('/', '/board')->name('dashboard');
 
 Route::get('/board/all', [BoardController::class, 'allBoards'])->name('board.all');
 Route::get('/board/search', [BoardController::class, 'search'])->name('board.search');
+Route::get('/board/searchown', [BoardController::class, 'searchOwn'])->name('board.searchOwn');
 
 // Board routes.
 Route::middleware(['auth', 'verified'])->group(function() {
