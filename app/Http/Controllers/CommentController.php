@@ -61,4 +61,24 @@ class CommentController extends Controller
 
         return back()->with('message', 'Reply added successfully!');
     }
+
+    /**
+     * Update the specified discussion.
+     */
+    public function update(Request $request, CommentModel $comment)
+    {
+        if ($comment->user_id !== request()->user()->id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+
+        $comment->update($data);
+
+        return back()->with('message', 'Comment edited successfully!');
+    }
+
+
 }

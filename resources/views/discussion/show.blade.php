@@ -47,6 +47,7 @@
                     </form>
                     
                     <button type="button" onclick="openModalComment({{ $comment->id }})">Reply</button>
+                    <button type="button" onclick="openModalEditComment({{ $comment->id }})">Edit</button>
 
                     <!-- Reply Modal for Each Comment -->
                     <div id="commentModal-{{ $comment->id }}" class="modal" style="display:none;">
@@ -57,6 +58,21 @@
                                 @csrf
                                 <label for="content">Reply Content:</label>
                                 <textarea id="content" name="content" rows="3" required></textarea>
+                                <button type="submit" style="margin-top: 10px;">Add Reply</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Edit Modal for Each Comment -->
+                    <div id="editModal-{{ $comment->id }}" class="modal" style="display:none;">
+                        <div class="modal-content">
+                            <button class="close-button" onclick="closeModalEditComment({{ $comment->id }})">&times;</button>
+                            <h2>Edit Reply</h2>
+                            <form action="{{ route('comment.update', $comment->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <label for="content">Reply Content:</label>
+                                <textarea id="content" name="content" rows="3" required>{{ $comment->content }}</textarea>
                                 <button type="submit" style="margin-top: 10px;">Add Reply</button>
                             </form>
                         </div>
@@ -239,6 +255,22 @@
 
     function closeModalComment(commentId) {
         let modal = document.getElementById(`commentModal-${commentId}`);
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    function openModalEditComment(commentId) {
+        let modal = document.getElementById(`editModal-${commentId}`);
+        if (modal) {
+            modal.style.display = 'flex';
+        } else {
+            console.error(`Modal with ID editModal-${commentId} not found.`);
+        }
+    }
+
+    function closeModalEditComment(commentId) {
+        let modal = document.getElementById(`editModal-${commentId}`);
         if (modal) {
             modal.style.display = 'none';
         }
