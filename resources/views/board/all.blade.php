@@ -21,18 +21,23 @@
                     <!-- View Board Link -->
                     <a href="{{ route('board.show', $board) }}">View</a> | 
                     
-                    <!-- Edit Board Link -->
-                    <a href="{{ route('board.edit', $board) }}">Edit</a>
-                    <form action="{{ route('board.destroy', $board) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button>Delete</button>
-                    </form>
+                    @if ($board->user_id === auth()->id())
+                        <!-- Edit Board Link -->
+                        <a href="{{ route('board.edit', $board) }}">Edit</a>
 
-                    <form action="{{ route('board.join', $board->id) }}" method="POST">
-                        @csrf
-                        <button type="submit">Join Board</button>
-                    </form>
+                        <form action="{{ route('board.destroy', $board) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button>Delete</button>
+                        </form>
+                    @endif
+
+                    @if ($board->user_id !== auth()->id())
+                        <form action="{{ route('board.join', $board->id) }}" method="POST">
+                            @csrf
+                            <button type="submit">Join Board</button>
+                        </form>    
+                    @endif
                 </li>
                 <hr>
             @endforeach
