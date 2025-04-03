@@ -16,60 +16,66 @@
     @else
         <ul>
             @foreach($board->discussion as $discussions)
-                
-                @if(!auth()->user()->isBlocking($discussions->user_id) && !$discussions->user->isBlocking(auth()->id()))
-                    <li>
-                        <p>{{ $discussions->content }}</p>
-                        <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
-                        <a href="{{ route('board.discussion.show', [$board->id, $discussions->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussions->id]) }}">Edit</a>
+                @php
+                    $isBlocked = auth()->user()->isBlocking($discussions->user_id) || $discussions->user->isBlocking(auth()->id());
+                @endphp
 
-                        <form action="{{ route('discussion.like', $discussions->id) }}" method="POST">
-                            @csrf
-                            <button type="submit">
-                                @if($discussions->likes->contains(auth()->user()->id))
-                                    ❤️ Unlike
-                                @else
-                                    🤍 Like
-                                @endif
-                            </button>
-                            <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
-                        </form>
-
-                        @if($discussions->user_id !== auth()->id())
-                            @if(auth()->user()->isBlocking($discussions->user))
-                                <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit">Unblock</button>
-                                </form>
-                            @else
-                                <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit">Block</button>
-                                </form>
-                            @endif
-                        @endif
-
-                        <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
-                            @csrf
-                            <button type="submit">
-                                @if($discussions->dislikes->contains(auth()->user()->id))
-                                    👎 Undislike
-                                @else
-                                    👎 Dislike
-                                @endif
-                            </button>
-                            <span>{{ $discussions->dislikes->count() }} {{ Str::plural('Dislike', $discussions->dislikes->count()) }}</span>
-                        </form>
-                        
-
-                        <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button>Delete</button>
-                        </form>
-                    </li>
+                @if ($isBlocked)
+                    <button onclick="toggleBlockedDiscussion({{ $discussions->id }})">
+                        Show blocked Discussion
+                    </button>   
                 @endif
 
+                <li id="discussion-{{ $discussions->id }}" style="{{ $isBlocked ? 'display: none;' : '' }}">
+                    <p>{{ $discussions->content }}</p>
+                    <small>Posted on {{ $discussions->created_at->format('M d, Y') }}</small>
+                    <a href="{{ route('board.discussion.show', [$board->id, $discussions->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussions->id]) }}">Edit</a>
+
+                    <form action="{{ route('discussion.like', $discussions->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if($discussions->likes->contains(auth()->user()->id))
+                                ❤️ Unlike
+                            @else
+                                🤍 Like
+                            @endif
+                        </button>
+                        <span>{{ $discussions->likes->count() }} {{ Str::plural('Like', $discussions->likes->count()) }}</span>
+                    </form>
+
+                    @if($discussions->user_id !== auth()->id())
+                        @if(auth()->user()->isBlocking($discussions->user))
+                            <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit">Unblock</button>
+                            </form>
+                        @else
+                            <form action="{{ route('user.block', $discussions->user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit">Block</button>
+                            </form>
+                        @endif
+                    @endif
+
+                    <form action="{{ route('discussion.dislike', $discussions->id) }}" method="POST">
+                        @csrf
+                        <button type="submit">
+                            @if($discussions->dislikes->contains(auth()->user()->id))
+                                👎 Undislike
+                            @else
+                                👎 Dislike
+                            @endif
+                        </button>
+                        <span>{{ $discussions->dislikes->count() }} {{ Str::plural('Dislike', $discussions->dislikes->count()) }}</span>
+                    </form>
+                    
+
+                    <form action="{{ route('board.discussion.destroy', [$board->id, $discussions->id]) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button>Delete</button>
+                    </form>
+                </li>
             @endforeach
         </ul>
     @endif
@@ -115,6 +121,18 @@
         const modal = document.getElementById('discussionModal');
         if (event.target === modal) {
             closeModal();
+        }
+    }
+</script>
+
+<script>
+    function toggleBlockedDiscussion(discussionId) {
+        let discussionElement = document.getElementById(`discussion-${discussionId}`);
+        
+        if (discussionElement.style.display === "none") {
+            discussionElement.style.display = "block";
+        } else {
+            discussionElement.style.display = "none";
         }
     }
 </script>
