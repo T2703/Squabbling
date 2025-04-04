@@ -45,4 +45,9 @@ class Discussion extends Model
     {
         return $this->belongsToMany(User::class, 'dislikes')->withTimestamps();
     }
+
+    public function scopeWithLikesCountOrdered($query)
+    {
+        return $query->withCount('likes')->orderByDesc('likes_count');
+    }
 }

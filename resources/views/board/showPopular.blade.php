@@ -15,7 +15,7 @@
         <p>No discussions yet.</p>
     @else
         <ul>
-            @foreach($discussions as $discussion) <!-- Change to use $discussions -->
+            @foreach($discussions as $discussion) 
                 @php
                     $isBlocked = auth()->user()->isBlocking($discussion->user_id) || $discussion->user->isBlocking(auth()->id());
                 @endphp
@@ -136,6 +136,3 @@
         }
     }
 </script>
-
-
-<a href="{{ route('board.showPopular', $board->id) }}">Sort by Most Popular</a>
