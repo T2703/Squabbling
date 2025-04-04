@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     // Board routes.
     Route::resource('board', BoardController::class);
     Route::get('/board/all', [BoardController::class, 'allBoards'])->name('board.all');
+    Route::get('/board/{board}/popular', [BoardController::class, 'showPopular'])->name('board.showPopular');
     Route::get('/board/search', [BoardController::class, 'search'])->name('board.search');
     Route::post('/boards/{board}/join', [BoardController::class, 'join'])->name('board.join');
     Route::post('/boards/{board}/leave', [BoardController::class, 'leave'])->name('board.leave');

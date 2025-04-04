@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BoardModel;
+use App\Models\Discussion;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -80,7 +81,14 @@ class BoardController extends Controller
     public function show(BoardModel $board)
     {
         $user = auth()->user(); 
-        return view('board.show', compact('board', 'user'));
+        $discussions = $board->discussion()
+            ->orderByDesc('created_at') 
+            ->get()
+            ->filter(function ($discussion) use ($user) {
+                return !$user->isBlocking($discussion->user_id) &&
+                    !$discussion->user->isBlocking($user->id);
+            });
+        return view('board.show', compact('board', 'user', 'discussions'));
     }
 
     /**
@@ -193,5 +201,22 @@ class BoardController extends Controller
         $boards = $ownBoards->merge($joinedBoards);
 
         return view('board.index', compact('boards'));
+    }
+    
+    /**
+     * Shows the most popular posts.
+     */
+    public function showPopular(BoardModel $board)
+    {
+        $user = auth()->user(); 
+        $discussions = $board->discussion()
+            ->withCount('likes')
+            ->orderByDesc('likes_count') 
+            ->get()
+            ->filter(function ($discussion) use ($user) {
+                return !$user->isBlocking($discussion->user_id) &&
+                    !$discussion->user->isBlocking($user->id);
+            });
+        return view('board.showPopular', compact('board', 'user', 'discussions'));
     }
 }
