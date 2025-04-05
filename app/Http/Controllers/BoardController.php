@@ -177,7 +177,11 @@ class BoardController extends Controller
     public function search(Request $request)
     {
         $search = $request->input('search');
-        $boards = BoardModel::where('title', 'like', "%$search%")->get();
+        $boards = BoardModel::where('title', 'like', "%$search%")
+            ->orWhereHas('tags', function ($query) use ($search) {
+                $query->where('name', 'like', "%$search%");
+            })
+            ->get();
 
         return view('board.index', compact('boards'));
     }
@@ -189,6 +193,9 @@ class BoardController extends Controller
 
         $ownBoards = BoardModel::where('user_id', $user->id)
             ->where('title', 'like', "%$search%")
+            ->orWhereHas('tags', function ($query) use ($search) {
+                $query->where('name', 'like', "%$search%");
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
