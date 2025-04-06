@@ -31,7 +31,7 @@
                     <small>Posted on {{ $discussion->created_at->format('M d, Y') }}</small>
                     <a href="{{ route('board.discussion.show', [$board->id, $discussion->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussion->id]) }}">Edit</a>
 
-                    <form action="{{ route('discussion.like', $discussion->id) }}" method="POST">
+                    <form action="{{ route('discussion.like', [$board->id, $discussion->id]) }}" method="POST">
                         @csrf
                         <button type="submit">
                             @if($discussion->likes->contains(auth()->user()->id))
@@ -57,7 +57,7 @@
                         @endif
                     @endif
 
-                    <form action="{{ route('discussion.dislike', $discussion->id) }}" method="POST">
+                    <form action="{{ route('discussion.dislike', [$board->id, $discussion->id]) }}" method="POST">
                         @csrf
                         <button type="submit">
                             @if($discussion->dislikes->contains(auth()->user()->id))

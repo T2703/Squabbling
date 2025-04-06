@@ -37,8 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/comment/{comment}/reply', [CommentController::class, 'reply'])->name('comment.reply');
 
     // Discussion likes & dislikes routes
-    Route::post('/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
-    Route::post('/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
+    Route::post('/boards/{board}/discussions/{discussion}/like', [LikesController::class, 'toggleLike'])->name('discussion.like');
+    Route::post('/boards/{board}/discussions/{discussion}/dislike', [DislikesController::class, 'toggleDislike'])->name('discussion.dislike');
 
     // Comment likes & dislikes routes
     Route::post('/comment/{comment}/like', [CommentLikeController::class, 'toggleLike'])->name('comment.like');

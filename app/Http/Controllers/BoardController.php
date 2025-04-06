@@ -81,6 +81,7 @@ class BoardController extends Controller
     public function show(BoardModel $board)
     {
         $user = auth()->user(); 
+
         $discussions = $board->discussion()
             ->orderByDesc('created_at') 
             ->get()
