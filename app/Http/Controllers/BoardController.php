@@ -93,6 +93,38 @@ class BoardController extends Controller
     }
 
     /**
+     * Shows the most popular posts.
+     */
+    public function showPopular(BoardModel $board, Request $request)
+    {
+        $user = auth()->user(); 
+        $range = $request->query('range', 'all');
+
+        // Start with the likes counts
+        $query = $board->discussion()->withCount('likes');
+        
+        // Apply time filter
+        if ($range === '1d') {
+            $query->where('created_at', '>=', now()->subDay());
+        } 
+        elseif ($range === '1w') {
+            $query->where('created_at', '>=', now()->subWeek());
+        }
+        elseif ($range === '1m') {
+            $query->where('created_at', '>=', now()->subMonth());
+        }
+
+        // Apply sorting
+        $discussions = $query->orderByDesc('likes_count')
+            ->get()
+            ->filter(function ($discussion) use ($user) {
+                return !$user->isBlocking($discussion->user_id) &&
+                        !$discussion->user->isBlocking($user->id);
+            });
+        return view('board.showPopular', compact('board', 'user', 'discussions'));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(BoardModel $board)
@@ -209,22 +241,5 @@ class BoardController extends Controller
         $boards = $ownBoards->merge($joinedBoards);
 
         return view('board.index', compact('boards'));
-    }
-    
-    /**
-     * Shows the most popular posts.
-     */
-    public function showPopular(BoardModel $board)
-    {
-        $user = auth()->user(); 
-        $discussions = $board->discussion()
-            ->withCount('likes')
-            ->orderByDesc('likes_count') 
-            ->get()
-            ->filter(function ($discussion) use ($user) {
-                return !$user->isBlocking($discussion->user_id) &&
-                    !$discussion->user->isBlocking($user->id);
-            });
-        return view('board.showPopular', compact('board', 'user', 'discussions'));
     }
 }

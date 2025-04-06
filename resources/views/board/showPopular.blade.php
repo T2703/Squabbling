@@ -15,6 +15,25 @@
         <p>No discussions yet.</p>
     @else
         <ul>
+
+            <div class="filters">
+                <a href="{{ route('board.showPopular', ['board' => $board->id, 'range' => '1d']) }}">
+                    <button {{ request('range') === '1d' ? 'disabled' : '' }}>Last 1 Day</button>
+                </a>
+            
+                <a href="{{ route('board.showPopular', ['board' => $board->id, 'range' => '1w']) }}">
+                    <button {{ request('range') === '1w' ? 'disabled' : '' }}>Last 1 Week</button>
+                </a>
+
+                <a href="{{ route('board.showPopular', ['board' => $board->id, 'range' => '1m']) }}">
+                    <button {{ request('range') === '1m' ? 'disabled' : '' }}>Last 1 Month</button>
+                </a>
+            
+                <a href="{{ route('board.showPopular', ['board' => $board->id, 'range' => 'all']) }}">
+                    <button {{ request('range') === 'all' || request('range') === null ? 'disabled' : '' }}>All Time</button>
+                </a>
+            </div>
+
             @foreach($discussions as $discussion) 
                 @php
                     $isBlocked = auth()->user()->isBlocking($discussion->user_id) || $discussion->user->isBlocking(auth()->id());
