@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/board/search', [BoardController::class, 'search'])->name('board.search');
     Route::post('/boards/{board}/join', [BoardController::class, 'join'])->name('board.join');
     Route::post('/boards/{board}/leave', [BoardController::class, 'leave'])->name('board.leave');
+    Route::post('/board/{board}/kick', [BoardController::class, 'kick'])->name('board.kick');
 
     // Discussion Routes
     Route::resource('board.discussion', DiscussionController::class);

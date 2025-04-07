@@ -1,5 +1,5 @@
 <div>
-    <h1>Board Details 1</h1>
+    <h1>Board Details</h1>
 
     <p><strong>Title:</strong> {{ $board->title }}</p>
     <p><strong>Description:</strong> {{ $board->description }}</p>
@@ -15,21 +15,24 @@
         <p>No discussions yet.</p>
     @else
         <ul>
-            @foreach($discussions as $discussion) <!-- Change to use $discussions -->
+            @foreach($discussions as $discussion)
                 @php
                     $isBlocked = auth()->user()->isBlocking($discussion->user_id) || $discussion->user->isBlocking(auth()->id());
                 @endphp
 
                 @if ($isBlocked)
-                    <button onclick="toggleBlockedDiscussion({{ $discussion->id }})">
-                        Show blocked Discussion
-                    </button>   
+                    <button onclick="toggleBlockedDiscussion({{ $discussion->id }}, this)">
+                        Show Blocked Discussion
+                    </button>
+                    <li id="discussion-{{ $discussion->id }}" style="display: none;">
+                @else
+                    <li id="discussion-{{ $discussion->id }}">
                 @endif
 
-                <li id="discussion-{{ $discussion->id }}" style="{{ $isBlocked ? 'display: none;' : '' }}">
                     <p>{{ $discussion->content }}</p>
                     <small>Posted on {{ $discussion->created_at->format('M d, Y') }}</small>
-                    <a href="{{ route('board.discussion.show', [$board->id, $discussion->id]) }}">View</a> | <a href="{{ route('board.discussion.edit', [$board->id, $discussion->id]) }}">Edit</a>
+                    <a href="{{ route('board.discussion.show', [$board->id, $discussion->id]) }}">View</a> | 
+                    <a href="{{ route('board.discussion.edit', [$board->id, $discussion->id]) }}">Edit</a>
 
                     <form action="{{ route('discussion.like', [$board->id, $discussion->id]) }}" method="POST">
                         @csrf
@@ -44,17 +47,12 @@
                     </form>
 
                     @if($discussion->user_id !== auth()->id())
-                        @if(auth()->user()->isBlocking($discussion->user))
-                            <form action="{{ route('user.block', $discussion->user->id) }}" method="POST">
-                                @csrf
-                                <button type="submit">Unblock</button>
-                            </form>
-                        @else
-                            <form action="{{ route('user.block', $discussion->user->id) }}" method="POST">
-                                @csrf
-                                <button type="submit">Block</button>
-                            </form>
-                        @endif
+                        <form action="{{ route('user.block', $discussion->user->id) }}" method="POST">
+                            @csrf
+                            <button type="submit">
+                                {{ auth()->user()->isBlocking($discussion->user) ? 'Unblock' : 'Block' }}
+                            </button>
+                        </form>
                     @endif
 
                     <form action="{{ route('discussion.dislike', [$board->id, $discussion->id]) }}" method="POST">
@@ -73,6 +71,12 @@
                         @csrf
                         @method('DELETE')
                         <button>Delete</button>
+                    </form>
+
+                    <form action="{{ route('board.kick', $board->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
+                        <button type="submit">Kick</button>
                     </form>
                 </li>
             @endforeach
@@ -123,19 +127,18 @@
             closeModal();
         }
     }
-</script>
 
-<script>
-    function toggleBlockedDiscussion(discussionId) {
-        let discussionElement = document.getElementById(`discussion-${discussionId}`);
-        
+    function toggleBlockedDiscussion(discussionId, button) {
+        const discussionElement = document.getElementById(`discussion-${discussionId}`);
+
         if (discussionElement.style.display === "none") {
             discussionElement.style.display = "block";
+            button.textContent = "Hide Blocked Discussion";
         } else {
             discussionElement.style.display = "none";
+            button.textContent = "Show Blocked Discussion";
         }
     }
 </script>
-
 
 <a href="{{ route('board.showPopular', $board->id) }}">Sort by Most Popular</a>
