@@ -101,7 +101,8 @@ class BoardController extends Controller
         $range = $request->query('range', 'all');
 
         // Start with the likes counts
-        $query = $board->discussion()->withCount('likes');
+        $query = $board->discussion()
+            ->withCount(['likes', 'dislikes']);
         
         // Apply time filter
         if ($range === '1d') {
@@ -114,13 +115,16 @@ class BoardController extends Controller
             $query->where('created_at', '>=', now()->subMonth());
         }
 
-        // Apply sorting
-        $discussions = $query->orderByDesc('likes_count')
-            ->get()
-            ->filter(function ($discussion) use ($user) {
-                return !$user->isBlocking($discussion->user_id) &&
-                        !$discussion->user->isBlocking($user->id);
-            });
+        // Apply sorting by net likes (likes - dislikes)
+        $query->orderByRaw('likes_count - dislikes_count DESC')
+        ->orderByDesc('created_at');
+
+        // Filter out blocked users
+        $discussions = $query->get()->filter(function ($discussion) use ($user) {
+            return !$user->isBlocking($discussion->user_id) &&
+                !$discussion->user->isBlocking($user->id);
+        });
+        
         return view('board.showPopular', compact('board', 'user', 'discussions'));
     }
 
