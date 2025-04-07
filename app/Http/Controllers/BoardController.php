@@ -84,11 +84,8 @@ class BoardController extends Controller
 
         $discussions = $board->discussion()
             ->orderByDesc('created_at') 
-            ->get()
-            ->filter(function ($discussion) use ($user) {
-                return !$user->isBlocking($discussion->user_id) &&
-                    !$discussion->user->isBlocking($user->id);
-            });
+            ->get();
+            
         return view('board.show', compact('board', 'user', 'discussions'));
     }
 
@@ -120,11 +117,8 @@ class BoardController extends Controller
         ->orderByDesc('created_at');
 
         // Filter out blocked users
-        $discussions = $query->get()->filter(function ($discussion) use ($user) {
-            return !$user->isBlocking($discussion->user_id) &&
-                !$discussion->user->isBlocking($user->id);
-        });
-        
+        $discussions = $query->get();
+
         return view('board.showPopular', compact('board', 'user', 'discussions'));
     }
 
@@ -209,6 +203,31 @@ class BoardController extends Controller
         }
 
         return back()->with('error', 'You are not part of this board.');
+    }
+
+    public function kick(BoardModel $board, Request $request)
+    {
+        $ownerUser = auth()->user();
+
+        if ($board->user_id !== $ownerUser->id) {
+            abort(403);
+        }
+
+        $userIdToKick = $request->input('user_id');
+
+        // Don't allow the owner to kick themselves.
+        if ($board->user_id == $userIdToKick) {
+            return back()->with('error', 'You cannot kick yourself (the board owner).');
+        }
+
+        if ($board->users()->where('user_id', $userIdToKick)->exists()) {
+            // Detach user from the board
+            $board->users()->detach($userIdToKick);
+
+            return back()->with('message', 'User has been kicked from the board.');
+        }
+
+        return back()->with('error', 'User is not a member of this board.');
     }
 
     public function search(Request $request)
