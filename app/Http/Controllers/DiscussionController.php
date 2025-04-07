@@ -100,7 +100,7 @@ class DiscussionController extends Controller
      */
     public function destroy(BoardModel $board, Discussion $discussion)
     {
-        if ($discussion->user_id !== request()->user()->id) {
+        if ($discussion->user_id !== request()->user()->id && $board->user_id !== request()->user()->id) {
             abort(403);
         }
 
