@@ -78,6 +78,12 @@
                         <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
                         <button type="submit">Kick</button>
                     </form>
+
+                    <form action="{{ route('board.kick', $board->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
+                        <button type="submit">Kick</button>
+                    </form>
                 </li>
             @endforeach
         </ul>
