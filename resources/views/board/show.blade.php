@@ -67,23 +67,22 @@
                         <span>{{ $discussion->dislikes->count() }} {{ Str::plural('Dislike', $discussion->dislikes->count()) }}</span>
                     </form>
 
-                    <form action="{{ route('board.discussion.destroy', [$board->id, $discussion->id]) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button>Delete</button>
-                    </form>
+                    @if($discussion->user_id === auth()->id()|| $board->user_id === auth()->id())
+                        <form action="{{ route('board.discussion.destroy', [$board->id, $discussion->id]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button>Delete</button>
+                        </form>
+                    @endif
 
-                    <form action="{{ route('board.kick', $board->id) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
-                        <button type="submit">Kick</button>
-                    </form>
+                    @if($board->user_id === auth()->id())
+                        <form action="{{ route('board.kick', $board->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
+                            <button type="submit">Kick</button>
+                        </form>
+                    @endif
 
-                    <form action="{{ route('board.kick', $board->id) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="user_id" value="{{ $discussion->user->id }}">
-                        <button type="submit">Kick</button>
-                    </form>
                 </li>
             @endforeach
         </ul>

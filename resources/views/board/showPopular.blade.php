@@ -155,3 +155,5 @@
         }
     }
 </script>
+
+<a href="{{ route('board.show', $board->id) }}">Sort by Most Recent</a>
