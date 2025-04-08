@@ -14,9 +14,20 @@ class CommentController extends Controller
             'content' => 'required|string|max:500',
         ]);
 
+        $user = auth()->user();
+
+        // Check if user already has a comment_number in this discussion
+        $existingComment = CommentModel::where('discussion_id', $discussion->id)
+                            ->where('user_id', $user->id)
+                            ->orderBy('comment_number', 'desc')
+                            ->first();
+
+        $nextCommentNumber = $existingComment ? $existingComment->comment_number + 1 : 1;
+        
         $discussion->comments()->create([
             'content' => $request->content,
             'user_id' => auth()->id(),
+            'reply_number' => $nextCommentNumber,
         ]);
 
         return back()->with('message', 'Comment added successfully!');
@@ -37,28 +48,30 @@ class CommentController extends Controller
         $request->validate([
             'content' => 'required|string|max:500',
         ]);
-
+    
         $user = auth()->user();
-
-        // Check if user already has a reply_number in this discussion
-        $existingReply = CommentModel::where('discussion_id', $comment->discussion_id)
-                                ->where('user_id', $user->id)
-                                ->first();
-        
-        // Placeholder if the replier is the owner.
-        $replyNumber = NULL;
-        if ($comment->user_id !== auth()->id()) {
-            $maxReplyNumber = CommentModel::where('discussion_id', $comment->discussion_id)->max('reply_number');
-            $replyNumber = $existingReply ? $existingReply->reply_number : ($maxReplyNumber !== null ? $maxReplyNumber + 1 : 1);
+    
+        // Check for existing reply from this user to this parent comment
+        $existingReply = $comment->replies()
+            ->where('user_id', $user->id)
+            ->first();
+    
+        if ($existingReply) {
+            $replyNumber = $existingReply->reply_number;
+        } else {
+            // Generate a unique random reply number within this comment's scope
+            do {
+                $replyNumber = random_int(1000, 9999); // or any range you prefer
+            } while ($comment->replies()->where('reply_number', $replyNumber)->exists());
         }
-        
+
         $comment->replies()->create([
             'content' => $request->content,
-            'user_id' => auth()->id(),
-            'discussion_id' => $comment->discussion_id, // Ensure it's tied to the same discussion
+            'user_id' => $user->id,
+            'discussion_id' => $comment->discussion_id,
             'reply_number' => $replyNumber,
         ]);
-
+    
         return back()->with('message', 'Reply added successfully!');
     }
 

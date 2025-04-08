@@ -20,6 +20,8 @@
                             By OP
                             on {{ $comment->created_at->format('M d, Y') }}
                         </small> 
+                    @else
+                    <strong>#{{ $comment->reply_number }}</strong> 
                     @endif
 
                     <form action="{{ route('comment.like', $comment->id) }}" method="POST">
@@ -100,7 +102,9 @@
                                         </form>
                                     </div>
                                 </div>
+
                                 <p>{{ $reply->content }}</p>
+
                                 @if ($reply->user_id === $discussion->user_id)
                                     <small>
                                         By OP
