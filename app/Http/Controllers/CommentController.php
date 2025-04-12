@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CommentModel;
 use App\Models\Discussion;
+use App\Notifications\CommentOnDiscussion;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -24,11 +25,16 @@ class CommentController extends Controller
 
         $nextCommentNumber = $existingComment ? $existingComment->comment_number + 1 : 1;
         
-        $discussion->comments()->create([
+        $comment = $discussion->comments()->create([
             'content' => $request->content,
             'user_id' => auth()->id(),
             'reply_number' => $nextCommentNumber,
         ]);
+
+        // Only notify if the commenter isn't the owner of the discussion
+        if ($discussion->user_id !== auth()->id()) {
+            $discussion->user->notify(new CommentOnDiscussion($comment));
+        }
 
         return back()->with('message', 'Comment added successfully!');
     }
