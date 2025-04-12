@@ -10,6 +10,12 @@
         <p style="color: green;">{{ session('message') }}</p>
     @endif
 
+    @foreach(auth()->user()->unreadNotifications as $notification)
+        <div>
+            <p>{{ $notification->data['message'] }}</p>
+        </div>
+    @endforeach
+
     @if(isset($boards) && $boards->isNotEmpty())
         <ul>
             @foreach($boards as $board)
