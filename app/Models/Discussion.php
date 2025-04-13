@@ -25,7 +25,7 @@ class Discussion extends Model
      */
     public function board(): BelongsTo
     {
-        return $this->belongsTo(BoardModel::class);
+        return $this->belongsTo(BoardModel::class, 'board_model_id');
     }
 
     /**

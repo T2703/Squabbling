@@ -31,6 +31,9 @@ class CommentController extends Controller
             'reply_number' => $nextCommentNumber,
         ]);
 
+        // Load discussion
+        $comment->load('discussion');
+
         // Only notify if the commenter isn't the owner of the discussion
         if ($discussion->user_id !== auth()->id()) {
             $discussion->user->notify(new CommentOnDiscussion($comment));
