@@ -44,6 +44,7 @@ class CommentOnDiscussion extends Notification
             'message' => 'Someone replied to your discussion.',
             'comment_id' => $this->comment->id,
             'content' => $this->comment->content,
+            'board_id' => $this->comment->discussion->board->id,
             'discussion_id' => $this->comment->discussion_id,
         ];
     }
