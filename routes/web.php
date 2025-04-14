@@ -49,6 +49,19 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('blocked', BlockController::class);
     Route::post('/user/{user}/block', [BlockController::class, 'toggleBlock'])->name('user.block');
     Route::post('/unblock-all', [BlockController::class, 'unblockAll'])->name('blocks.unblockAll');
+
+    // Notifaction route
+    Route::get('/notification/redirect/{notification}', function (\Illuminate\Notifications\DatabaseNotification $notification) {
+        $notification->markAsRead();
+    
+        $data = $notification->data;
+        
+        // Redirect to the board discussion show
+        return redirect()->route('board.discussion.show', [
+            'board' => $data['board_id'],
+            'discussion' => $data['discussion_id'],
+        ]);
+    })->name('notification.redirect');
 });
 
 

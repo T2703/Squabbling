@@ -74,12 +74,20 @@ class CommentController extends Controller
             } while ($comment->replies()->where('reply_number', $replyNumber)->exists());
         }
 
-        $comment->replies()->create([
+        $reply = $comment->replies()->create([
             'content' => $request->content,
             'user_id' => $user->id,
             'discussion_id' => $comment->discussion_id,
             'reply_number' => $replyNumber,
         ]);
+
+        // Load discussion
+        $reply->load('discussion');
+
+        // Only notify if the commenter isn't the owner of the discussion
+        if ($comment->user_id !== auth()->id()) {
+            $comment->user->notify(new CommentOnDiscussion($reply));
+        }
     
         return back()->with('message', 'Reply added successfully!');
     }

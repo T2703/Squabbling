@@ -50,8 +50,9 @@
 
                     <x-slot name="content">
                         @forelse(Auth::user()->unreadNotifications as $notification)
-                        <x-dropdown-link :href="route('board.discussion.show', ['board' => $notification->data['board_id'], 'discussion' => $notification->data['discussion_id']])">
+                        <x-dropdown-link :href="route('notification.redirect', $notification->id)">
                             💬 {{ $notification->data['message'] }}
+                            {{ $notification->data['discussion_content'] ?? '' }}
                         </x-dropdown-link>
                         @empty
                             <div class="px-4 py-2 text-gray-500">
